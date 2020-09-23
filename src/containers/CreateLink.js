@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import React, { useCallback, useState } from 'react';
 import { Mutation } from 'react-apollo';
+import { useHistory } from 'react-router';
 import Button from '../components/Button';
 import TextInput from '../components/TextInput';
 
@@ -18,6 +19,7 @@ const POST_MUTATION = gql`
 const CreateLink = () => {
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
+  const history = useHistory();
 
   const descriptionOnChange = useCallback((event) => {
     setDescription(event.target.value);
@@ -26,6 +28,10 @@ const CreateLink = () => {
   const urlOnChange = useCallback((event) => {
     setUrl(event.target.value);
   }, []);
+
+  const onComplete = useCallback(() => {
+    history.push('/');
+  }, [history]);
 
   return (
     <div>
@@ -41,7 +47,11 @@ const CreateLink = () => {
           placeholder='The URL for the link'
         />
       </div>
-      <Mutation mutation={POST_MUTATION} variables={{ description, url }}>
+      <Mutation
+        mutation={POST_MUTATION}
+        variables={{ description, url }}
+        onCompleted={onComplete}
+      >
         {(postMutation) => <Button onClick={postMutation}>Submit</Button>}
       </Mutation>
     </div>
