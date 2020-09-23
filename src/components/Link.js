@@ -2,9 +2,9 @@ import React from 'react';
 
 const Link = ({ link: { description, url } }) => (
   <div>
-    <iv>
+    <div>
       {description} ({url})
-    </iv>
+    </div>
   </div>
 );
 
