@@ -40,11 +40,13 @@ const CreateLink = () => {
           value={description}
           onChange={descriptionOnChange}
           placeholder='A description for the link'
+          type='text'
         />
         <TextInput
           value={url}
           onChange={urlOnChange}
           placeholder='The URL for the link'
+          type='text'
         />
       </div>
       <Mutation

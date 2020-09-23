@@ -3,6 +3,7 @@ import CreateLink from './containers/CreateLink';
 import LinkList from './containers/LinkList';
 import Header from './components/Header';
 import { Route, Switch } from 'react-router';
+import Login from './containers/Login';
 
 const App = () => (
   <div className='center w85'>
@@ -11,6 +12,7 @@ const App = () => (
       <Switch>
         <Route exact path='/' component={LinkList} />
         <Route exact path='/create' component={CreateLink} />
+        <Route exact path='/login' component={Login} />
       </Switch>
     </div>
   </div>
