@@ -4,6 +4,7 @@ import { Mutation } from 'react-apollo';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
 import TextInput from '../components/TextInput';
+import { FEED_QUERY } from './LinkList';
 
 const POST_MUTATION = gql`
   mutation PostMutation($description: String!, $url: String!) {
@@ -53,6 +54,14 @@ const CreateLink = () => {
         mutation={POST_MUTATION}
         variables={{ description, url }}
         onCompleted={onComplete}
+        update={(store, { data: { post } }) => {
+          const data = store.readQuery({ query: FEED_QUERY });
+          data.feed.links.unshift(post);
+          store.writeQuery({
+            query: FEED_QUERY,
+            data,
+          });
+        }}
       >
         {(postMutation) => <Button onClick={postMutation}>Submit</Button>}
       </Mutation>
