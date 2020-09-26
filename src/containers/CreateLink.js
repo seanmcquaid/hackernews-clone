@@ -4,6 +4,7 @@ import { Mutation } from 'react-apollo';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
 import TextInput from '../components/TextInput';
+import { LINKS_PER_PAGE } from '../constants';
 import { FEED_QUERY } from './LinkList';
 
 const POST_MUTATION = gql`
@@ -31,7 +32,7 @@ const CreateLink = () => {
   }, []);
 
   const onComplete = useCallback(() => {
-    history.push('/');
+    history.push('/new/1');
   }, [history]);
 
   return (
@@ -55,11 +56,18 @@ const CreateLink = () => {
         variables={{ description, url }}
         onCompleted={onComplete}
         update={(store, { data: { post } }) => {
-          const data = store.readQuery({ query: FEED_QUERY });
+          const first = LINKS_PER_PAGE;
+          const skip = 0;
+          const orderBy = 'createdAt_DESC';
+          const data = store.readQuery({
+            query: FEED_QUERY,
+            variables: { first, skip, orderBy },
+          });
           data.feed.links.unshift(post);
           store.writeQuery({
             query: FEED_QUERY,
             data,
+            variables: { first, skip, orderBy },
           });
         }}
       >

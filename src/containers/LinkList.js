@@ -83,11 +83,19 @@ const LinkList = () => {
   const history = useHistory();
 
   const _updateCacheAfterVote = (store, createVote, linkId) => {
-    const data = store.readQuery({ query: FEED_QUERY });
+    const isNewPage = location.pathname.includes('new');
+    const pageNumber = parseInt(page, 10);
+
+    const skip = isNewPage ? (pageNumber - 1) * LINKS_PER_PAGE : 0;
+    const first = isNewPage ? LINKS_PER_PAGE : 100;
+    const orderBy = isNewPage ? 'createdAt_DESC' : null;
+    const data = store.readQuery({
+      query: FEED_QUERY,
+      variables: { first, skip, orderBy },
+    });
 
     const votedLink = data.feed.links.find((link) => link.id === linkId);
     votedLink.votes = createVote.link.votes;
-
     store.writeQuery({ query: FEED_QUERY, data });
   };
 
@@ -188,10 +196,10 @@ const LinkList = () => {
             ))}
             {isNewPage && (
               <div className='flex ml4 mv3 gray'>
-                <div className='pointer mr2' onClick={this._previousPage}>
+                <div className='pointer mr2' onClick={_previousPage}>
                   Previous
                 </div>
-                <div className='pointer' onClick={() => this._nextPage(data)}>
+                <div className='pointer' onClick={() => _nextPage(data)}>
                   Next
                 </div>
               </div>
