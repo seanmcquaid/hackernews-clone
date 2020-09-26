@@ -2,7 +2,7 @@ import React from 'react';
 import Link from '../components/Link';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import { useLocation, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { LINKS_PER_PAGE } from '../constants';
 
 export const FEED_QUERY = gql`
@@ -80,6 +80,7 @@ const NEW_VOTES_SUBSCRIPTION = gql`
 const LinkList = () => {
   const location = useLocation();
   const { page } = useParams();
+  const history = useHistory();
 
   const _updateCacheAfterVote = (store, createVote, linkId) => {
     const data = store.readQuery({ query: FEED_QUERY });
@@ -142,6 +143,22 @@ const LinkList = () => {
     return rankedLinks;
   };
 
+  const _nextPage = (data) => {
+    const pageNumber = parseInt(page, 10);
+    if (pageNumber <= data.feed.count / LINKS_PER_PAGE) {
+      const nextPage = pageNumber + 1;
+      history.push(`/new/${nextPage}`);
+    }
+  };
+
+  const _previousPage = () => {
+    const pageNumber = parseInt(page, 10);
+    if (pageNumber > 1) {
+      const previousPage = pageNumber - 1;
+      history.push(`/new/${previousPage}`);
+    }
+  };
+
   return (
     <Query query={FEED_QUERY} variables={_getQueryVariables()}>
       {({ loading, error, data, subscribeToMore }) => {
@@ -165,7 +182,7 @@ const LinkList = () => {
               <Link
                 key={link.id}
                 link={link}
-                index={index}
+                index={index + pageIndex}
                 updateStoreAfterVote={_updateCacheAfterVote}
               />
             ))}
